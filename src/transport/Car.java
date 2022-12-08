@@ -1,109 +1,137 @@
 package transport;
 
-public class Car {
-    public static class Key{
+public class Car extends Transport {
+    public class Key{
         private boolean remoteIgnition;
-        private boolean keyless;
+        private boolean keylessPermission;
 
-        public Key(boolean remoteIgnition, boolean keyless){
+        public Key(boolean remoteIgnition, boolean keylessPermission){
             this.remoteIgnition = remoteIgnition;
-            this.keyless = keyless;
+            this.keylessPermission = keylessPermission;
         }
     }
 
-    public static class Insurance{
+    public class Insurance{
+        private int duration;
+        private int price;
+        private int number;
 
+        public Insurance(int duration, int price, int number){
+            this.duration = duration;
+            this.price = price;
+            this.number = number;
+        }
     }
 
-    private final String brand;
-    private final String model;
     private float engineVolume;
-    private String color;
-    private final int year;
-    private final String country;
-    private String transmission;
+    private String transmissionType;
     private final String bodyType;
     private String regNumber;
     private final int seatNumber;
-    private boolean isSummerRubber;
+    private boolean isSummer;
 
-    public Car(String brand, String model, float engineVolume, String color, int year, String country,
-               String transmission, String bodyType, String regNumber, int seatNumber, boolean isSummerRubber){
-        if(brand == null || brand.isEmpty()){
-            this.brand = "неизвестно";
-        }else{
-            this.brand = brand;
+    public Car(String brand, String model, int year, String country, String color, int maxSpeed, float engineVolume,
+               String transmissionType, String bodyType, String regNumber, int seatNumber, boolean isSummer){
+        super(brand, model, year, country, color, maxSpeed);
+        setEngineVolume(engineVolume);
+        setTransmissionType(transmissionType);
+        if(bodyType != null || !bodyType.isEmpty() || !bodyType.isBlank()){
+            this.bodyType = bodyType;
+        } else {
+            this.bodyType = "unknown";
         }
-
-        if(model == null || model.isEmpty()){
-            this.model = "неизвестно";
-        }else{
-            this.model = model;
-        }
-
-        if(engineVolume <= 0){
-            this.engineVolume = 1.5f;
-        }else{
-            this.engineVolume = engineVolume;
-        }
-
-        if(color == null || color.isEmpty()){
-            this.color = "белый";
-        }else{
-            this.color = color;
-        }
-
-        if(year <= 0){
-            this.year = 2000;
-        }else{
-            this.year = year;
-        }
-
-        if(country == null || country.isEmpty()){
-            this.country = "неизвестно";
-        }else{
-            this.country = country;
-        }
-
-        if(transmission == null || transmission.isEmpty()){
-            this.transmission = "неизвестно";
-        }else{
-            this.transmission = country;
-        }
-
-        if(bodyType == null || bodyType.isEmpty()){
-            this.bodyType = "неизвестно";
-        }else{
-            this.bodyType = country;
-        }
-
-        if(regNumber == null || regNumber.isEmpty()){
-            this.regNumber = "неизвестно";
-        }else{
-            this.regNumber = country;
-        }
-
-        if(seatNumber <= 0){
-            this.seatNumber = 1;
-        }else{
+        setRegNumber(regNumber);
+        if(seatNumber > 0){
             this.seatNumber = seatNumber;
+        }else{
+            this.seatNumber = 1;
         }
-
-        this.isSummerRubber = isSummerRubber;
+        this.isSummer = isSummer;
     }
 
-    public String toString() {
-        return "====================" + "\n" +
-                "марка: " + brand + "\n" +
-                "модель: " + model + "\n" +
-                "вместимость двигателя (л): " + engineVolume + "\n" +
-                "цвет: " + color + "\n" +
-                "год производства: " + year + "\n" +
-                "страна производства: " + country + "\n" +
-                "====================";
+    public float getEngineVolume() {
+        return engineVolume;
+    }
+
+    public String getTransmissionType() {
+        return transmissionType;
+    }
+
+    public String getBodyType() {
+        return bodyType;
+    }
+
+    public String getRegNumber() {
+        return regNumber;
+    }
+
+    public int getSeatNumber() {
+        return seatNumber;
+    }
+
+    public boolean getRubberType(){
+        return isSummer;
+    }
+
+    public void setEngineVolume(float engineVolume) {
+        if(engineVolume > 0){
+            this.engineVolume = engineVolume;
+        }else{
+            this.engineVolume = 1.5f;
+        }
+    }
+
+    public void setTransmissionType(String transmissionType) {
+        if(transmissionType != null || !transmissionType.isEmpty() || !transmissionType.isBlank()){
+            this.transmissionType = transmissionType;
+        } else {
+            this.transmissionType = "unknown";
+        }
+    }
+
+    public void setRegNumber(String regNumber) {
+        if(regNumber != null || !regNumber.isEmpty() || !regNumber.isBlank() || checkNumber(regNumber)){
+            this.regNumber = regNumber;
+        } else {
+            this.regNumber = "unknown";
+        }
+    }
+
+    public boolean checkNumber(String regNumber){
+        boolean flag = true;
+        for (int i = 0; i < regNumber.length(); i++){
+            if(i == 0 || i == 4 || i == 5){
+                flag = flag && Character.isLetter(regNumber.charAt(i));
+            }else{
+                flag = flag && Character.isDigit(regNumber.charAt(i));
+            }
+        }
+        return flag;
     }
 
     public void changeRubber(){
-        isSummerRubber = !isSummerRubber;
+        isSummer = !isSummer;
+    }
+
+    @Override
+    public void refill() {
+        System.out.println("Виды топлива: дизель, бензин, электричество");
+        fuelPercentage = 100.00f;
+    }
+
+    public String toString() {
+        return "=========================" + "\n" +
+                "марка: " + brand + "\n" +
+                "модель: " + model + "\n" +
+                "год выпуска: " + year + "\n" +
+                "страна-производитель: " + country + "\n" +
+                "цвет: " + color + "\n" +
+                "максимальная скорость: " + maxSpeed + "\n" +
+                "вместимость двигателя: " + engineVolume + "\n" +
+                "коробка передач: " + transmissionType + "\n" +
+                "тип кузова: " + bodyType + "\n" +
+                "регистрационный номер: " + regNumber + "\n" +
+                "вместимость: " + seatNumber + "\n" +
+                "=========================";
     }
 }
